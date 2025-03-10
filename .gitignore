@@ -1,2 +1,3 @@
 # 忽略编辑器/IDE配置
 .vscode/          # VS Code
+.cph/
