@@ -1,5 +1,5 @@
-# 忽略编辑器/IDE配置
-.vscode/          # VS Code
-.cph/
-.abc/.vscode
-.abc/.cph
+# 忽略所有位置的 .vscode 文件夹
+**/.vscode/
+
+# 忽略所有位置的 .cph 文件夹
+**/.cph/
