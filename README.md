@@ -17,3 +17,13 @@ dp[i] += C(i-1, 2) * dp[i - 3];
 // 从前i-1个人选3个人来跟新人打麻将
 dp[i] += C(i-1, 3) * dp[i - 4];
 ```
+### [迷宫问题](https://www.nowcoder.com/practice/cf24906056f4488c9ddb132f317e03bc?channelPut=w25springcamp)
+`典题-dfs`
+```C++
+    res.push_back({xx, yy});
+    vis[xx][yy] = 1;
+    dfs(xx, yy, res);
+    if(flg) return ;
+    res.pop_back();
+    vis[xx][yy] = 0;
+```
