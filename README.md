@@ -42,3 +42,17 @@ for(int k=0; k<=20; k++) { // 针对二进制每一位的贡献值
 ```
 ### [密码截取](https://www.nowcoder.com/practice/3cd4621963e8454594f00199f4536bb1?channelPut=w25springcamp)
 `求最长回文子串`--枚举回文中心/马拉车
+### [计算字符串的编辑距离](https://www.nowcoder.com/practice/3959837097c7413a961a135d7104c314?channelPut=w25springcamp)
+`dp -- 编辑距离问题`
+我的误区：试图模拟删除/插入操作
+Tips: We can consider **insert** as **delete**.
+```C++
+// dp[i][j]: a[0~i-1] 和 b[0~j-1]之间的编辑距离（最小操作次数：插入 删除 改变）
+// 无操作
+if(a[i-1] == b[j-1]) dp[i][j] = dp[i-1][j-1];
+else {
+    dp[i][j] = min(dp[i-1][j], dp[i][j-1]) + 1; //删除a，删除b
+    dp[i][j] = min(dp[i][j], dp[i-1][j-1] + 1); //更改
+}
+dp[n][m] -> ans
+```
