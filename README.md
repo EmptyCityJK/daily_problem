@@ -40,3 +40,5 @@ for(int k=0; k<=20; k++) { // 针对二进制每一位的贡献值
     }
 }
 ```
+### [密码截取](https://www.nowcoder.com/practice/3cd4621963e8454594f00199f4536bb1?channelPut=w25springcamp)
+`求最长回文子串`--枚举回文中心/马拉车
