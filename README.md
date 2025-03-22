@@ -56,3 +56,23 @@ else {
 }
 dp[n][m] -> ans
 ```
+### [字符串通配符](https://www.nowcoder.com/practice/43072d50a6eb44d2a6c816a283b02036?channelPut=w25springcamp)
+`dp＋字符串 -- 类编辑距离`
+```C++
+// dp[i][j]: s[0-i-1] 和 p[0-j-1] 之间能否匹配
+vector<vector<bool>> dp(n + 1, vector<bool>(m + 1, false));
+// 初始化
+dp[0][0] = true;
+// p为空串时，只有s全为*才为true
+for(int i=0; i<n; i++) {
+    if(s[i] != '*') break;
+    dp[i + 1][0] = true;
+}
+// 状态转移
+// *: 1.插入第>=2个 2.不插入 3.插入第1个
+if(s[i-1] == '*' && check(p[j-1])) dp[i][j] = dp[i][j-1] | dp[i-1][j] | dp[i-1][j-1];
+// ?: 替换(与dp[i-1][j-1]状态一样)
+else if(s[i-1] == '?' && check(p[j-1])) dp[i][j] = dp[i-1][j-1];
+// 相等情况
+else if(tolower(s[i-1]) == tolower(p[j-1])) dp[i][j] = dp[i-1][j-1]; 
+```
