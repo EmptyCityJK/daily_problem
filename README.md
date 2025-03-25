@@ -76,3 +76,24 @@ else if(s[i-1] == '?' && check(p[j-1])) dp[i][j] = dp[i-1][j-1];
 // 相等情况
 else if(tolower(s[i-1]) == tolower(p[j-1])) dp[i][j] = dp[i-1][j-1]; 
 ```
+### [小苯的Polygon](https://ac.nowcoder.com/acm/contest/104637/E)
+`01背包dp`
+**能否构成凸多边形：**最大边 < 其他次小边之和
+```C++
+// 枚举最大边a[i], 从a[1~i-1]找到满足一个和大于a[i]的组合的最小值
+vector<bool> dp(10001, false); // dp[i]: 和为i的组合存在与否
+dp[0] = true;
+int ans = 1e9;
+for(int i=1; i<=n; i++) { // 最大边
+    for(int j=a[i]+1; j<=10000; j++) { // 和
+        // dp[j]: 使用上一层的结果
+        if(dp[j]) {
+            ans = min(ans, j + a[i]);
+            break;
+        }
+    }
+    for(int j=10000; j>=a[i]; j--) {
+        dp[j] = dp[j] | dp[j-a[i]];
+    }
+}
+```
