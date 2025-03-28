@@ -138,3 +138,26 @@ for(int i=n; i>=1; i--) {
     }
 }
 ```
+### [摆花](https://www.luogu.com.cn/problem/P1077)
+`多重背包-dp`
+> N种物品，容量为V的背包，第i种物品最多有s[i]个，每件物品体积为v[i]，价值为w[i]。
+> 求解：将哪些物品装入背包，可使物品体积总和不超过背包容量，且价值总和最大。
+```C++
+// 状态转移：前i件物品背包装了体积为j的物品，第i件物品的个数为k
+dp[i][j] = max(dp[i][j], dp[i-1][j - k*v[i]] + k*w[i]); k = 0~s[i]
+```
+**对于此题：**n种花，最多可以摆m盆，第i种花至多a[i]盆，求**摆花方案数**
+```C++
+// dp[i][j]: 前i种花，摆放了j盆的方案数
+// dp[i][j] += dp[i-1][j-k] for k in [0, a[i]]
+vector<vector<ll>> dp(n + 1, vector<ll>(m + 1));
+dp[0][0] = 1;
+for(int i=1; i<=n; i++) { // 枚举物品
+    for(int j=0; j<=m; j++) { // 枚举总摆放盆数
+        for(int k=0; k<=min(a[i], j); k++) { // 枚举物品i的摆放数
+            dp[i][j] = (dp[i][j] + dp[i-1][j-k]) % mod;
+        }
+    }
+}
+cout << dp[n][m] << endl;
+```
