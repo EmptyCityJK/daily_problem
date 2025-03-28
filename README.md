@@ -97,3 +97,44 @@ for(int i=1; i<=n; i++) { // 最大边
     }
 }
 ```
+### [图的遍历](https://www.luogu.com.cn/problem/P3916)
+`有向图，求 A(v) 表示从点 v 出发，能到达的编号最大的点`
+1 -> 5 -> 4 -> 3 -> 2
+正难则反：2 -> 3 -> 4 -> 5 -> 1
+反向建图，倒着遍历(n~1)
+```C++
+for(int i=1; i<=m; i++) {
+    int u, v; cin >> u >> v;
+    g[v].push_back(u); // 反向建边
+}
+```
+1. DFS
+```C++
+vector<int> ans(n + 1);
+function<void(int, int)> dfs = [&](int u, int res) {
+    if(ans[u]) return;
+    ans[u] = res;
+    for(int v: g[u]) {
+        dfs(v, res);
+    }
+};
+for(int i=n; i>=1; i--)
+    dfs(i, i);
+```
+2. BFS
+```C++
+int ans[n + 1];
+vector<bool> vis(n + 1);
+for(int i=1; i<=n; i++) ans[i] = i;
+for(int i=n; i>=1; i--) {
+    queue<int> q; q.push(i);
+    while(q.size()) {
+        int u = q.front(); q.pop(); vis[u] = 1;
+        for(int t: g[u]) {
+            if(vis[t]) continue;
+            vis[t] = 1; q.push(t);
+            ans[t] = max(i, ans[t]);
+        }
+    }
+}
+```
