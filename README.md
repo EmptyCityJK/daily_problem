@@ -173,3 +173,30 @@ for(int i=1; i<=n; i++) {
     }
 }
 ```
+### [哇，这就是5p](https://www.luogu.com.cn/problem/P11998?contestId=236568)
+`暴力：二进制枚举` && `正解：概率dp`
+1. 二进制枚举: n<=15
+```C++
+ll ans = 0; // 总分是m的倍数的概率
+// 枚举二进制
+for(int i=0; i<(1 << n); i++) {
+    // 十进制转二进制(01序列)
+    int t; vector<int> v;
+    while(t) {
+        v.push_back(t % 2);
+        t /= 2;
+    }
+    while(v.size() < n) v.push_back(0);
+    ll sum = 0, P = 1; // 该序列总分和概率
+    // 枚举01序列：0做错，1做对
+    for(int i=0; i<n; i++) {
+        if(v[i]) {
+            sum += a[i + 1];
+            (P *= p[i + 1]) %= mod;
+        } else (P *= 1 - p[i + 1]) %= mod;
+    }
+    if(sum % m != 0) continue; // 不是m的倍数
+    (ans += P) %= mod;
+}
+```
+2. 概率dp
