@@ -161,3 +161,15 @@ for(int i=1; i<=n; i++) { // 枚举物品
 }
 cout << dp[n][m] << endl;
 ```
+### [活动安排](https://www.nowcoder.com/practice/16d971e9e42e4f3b9b1e2b8794796a43?channelPut=w25springcamp)
+`贪心 - 典`
+> 按结束时间排序，优先`选择结束时间最早`且`与前一个活动不冲突`的活动
+```C++
+int ed = -1;
+for(int i=1; i<=n; i++) {
+    if(a[i].first >= ed) {
+        ans ++;
+        ed = a[i].second;
+    }
+}
+```
