@@ -175,7 +175,7 @@ for(int i=1; i<=n; i++) {
 ```
 ### [哇，这就是5p](https://www.luogu.com.cn/problem/P11998?contestId=236568)
 `暴力：二进制枚举` && `正解：概率dp`
-1. 二进制枚举: n<=15
+1. 二进制枚举: n<=15(20分)
 ```C++
 ll ans = 0; // 总分是m的倍数的概率
 // 枚举二进制
@@ -199,4 +199,19 @@ for(int i=0; i<(1 << n); i++) {
     (ans += P) %= mod;
 }
 ```
-2. 概率dp
+2. 概率dp(50分，二维，该题卡二维)
+> 概率dp的第二维一般都与答案强相关
+> 该题求：得分是m的倍数的概率 -> **得分%m==0的概率**
+> dp[i][j]: 前i题，**得分%m为j的概率**, res = dp[n][0]
+```C++
+vector<vector<ll>> dp(n + 1, vector<ll>(m + 1));
+dp[0][0] = 1;
+for(int i=1; i<=n; i++) {
+    for(int j=0; j<m; j++) {
+        (dp[i][j] = dp[i-1][j] * (1 - p[i]) % mod + dp[i-1][(j - a[i] + mod) % mod] * p[i] % mod) %= mod;
+    }
+}
+//* 该题dp有可能是负数（因为1-p[i]）
+cout << (dp[n][0] + mod) % mod << endl;
+```
+3. 概率dp(100分，一维)
