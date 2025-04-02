@@ -240,3 +240,37 @@ for(int i=1; i<=n; i++) {
 }
 cout << (dp[0] + mod) % mod << endl;
 ```
+### [模板-哈夫曼编码](https://www.nowcoder.com/practice/4c0419eb07c840ca8402e4f2a52cfd49?channelPut=w25springcamp)
+> [前缀知识 哈夫曼树和哈夫曼编码](https://zhuanlan.zhihu.com/p/687698948)
+`dfs/结论`
+1. 结论
+每个叶子节点的权重（频次）会在哈夫曼树中出现`depth[deaf]`次，故统计字符串在哈夫曼编码后的最短长度：
+`ans += cnt[i] * depth[i](i = 1, 2, ..., n) -> ans += cnt[u] + cnt[v]`
+2. 优先队列+dfs
+```C++
+    priority_queue<pii, vector<pii>, greater<pii>> q;
+    vector<int> g[2 * n + 1];
+    while(q.size()) {
+        if(q.size() == 1) {
+            break;
+        } // 频率，编号
+        auto [u, ui] = q.top(); q.pop();
+        auto [v, vi] = q.top(); q.pop();
+        ll sum = u + v;
+        q.push({sum, ++ id});
+        g[id].push_back(ui);
+        g[id].push_back(vi);
+    }
+    vector<ll> dep(id+1);
+    function<void(int)> dfs = [&](int u) {
+        for(int v: g[u]) {
+            dep[v] = dep[u] + 1;
+            dfs(v);
+        }
+        return ;
+    };
+    dfs(id);
+    ll ans = 0;
+    for(int i=1; i<=n; i++)
+        ans += cnt[i] * dep[i];
+```
