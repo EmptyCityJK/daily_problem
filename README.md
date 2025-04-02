@@ -215,3 +215,17 @@ for(int i=1; i<=n; i++) {
 cout << (dp[n][0] + mod) % mod << endl;
 ```
 3. 概率dp(100分，一维)
+> 新开一个pre数组记录dp的上一维：dp在j:0~m时出现了dp[**(j-a[i]+m)%m**]所以可能会出现已经被更新的dp，但需要的是上一维的dp。
+```C++
+vector<ll> dp(m + 1);
+dp[0] = 1;
+vector<ll> pre = dp; // 记录上一维
+cout << pre.size() << endl;
+for(int i=1; i<=n; i++) {
+    for(int j=0; j<m; j++) {
+        (dp[j] = pre[j] * (1 - p[i]) % mod + pre[(j - a[i] + m) % m] * p[i] % mod) %= mod;
+    }
+    pre = dp;
+}
+cout << (dp[0] + mod) % mod << endl;
+```
