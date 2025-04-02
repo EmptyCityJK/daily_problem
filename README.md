@@ -198,6 +198,18 @@ for(int i=0; i<(1 << n); i++) {
     if(sum % m != 0) continue; // 不是m的倍数
     (ans += P) %= mod;
 }
+// 写法2：更省时间 防卡常
+for(int k=0; k<(1<<k); k++) {
+    ll sum = 0, P = 1;
+    for(int i=0; i<n; i++) {
+        if(k << i & 1) {
+            sum += a[i + 1];
+            (P *= p[i + 1]) %= mod;
+        } else (P *= 1 - p[i + 1]) %= mod;
+    }
+    if(sum % m != 0) continue;
+    (ans += P) %= mod;
+}
 ```
 2. 概率dp(50分，二维，该题卡二维)
 > 概率dp的第二维一般都与答案强相关
