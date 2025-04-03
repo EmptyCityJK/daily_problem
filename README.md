@@ -274,3 +274,31 @@ cout << (dp[0] + mod) % mod << endl;
     for(int i=1; i<=n; i++)
         ans += cnt[i] * dep[i];
 ```
+### [相差不超过k的最多数](https://www.nowcoder.com/practice/562630ca90ac40ce89443c91060574c6?channelPut=w25springcamp)
+`典 - 二分`
+枚举左端点l，求满足(abs(a[r]-a[l])<=k)的右端点最大值(l=mid)
+```C++
+for(int i=1; i<=n; i++) {
+    int l = i, r = n;
+    while(l < r) {
+        int mid = (l + r + 1) >> 1;
+        if(check(mid, i)) l = mid;
+        else r = mid - 1;
+    }
+    ans = max(ans, l - i + 1);
+}
+```
+**使用库函数：**
+> `upper_bound(a.begin()+1, a.end(), a[i]+k): `
+> 找到第一个>a[i]+k的元素的迭代器
+> `prev(...): `
+> 获取前一个迭代器
+> 相当于找到最后一个元素<=a[i]+k的元素
+> `prev(upper_bound(...)) - a.begin(): `
+> 获取该元素的索引下标
+```C++
+for(int i=1; i<=n; i++) {
+    int r = prev(upper_bound(a.begin()+1, a.end(), a[i]+k)) - a.begin();
+    res = max(res, r - i + 1);
+}
+```
