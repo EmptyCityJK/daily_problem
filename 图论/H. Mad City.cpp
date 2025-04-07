@@ -12,6 +12,7 @@ inline void solve() {
         cout << "NO" << endl;
         return ;
     }
+    // 多个入环点，怎么判断该分支和环的交汇点：维护最短距离
     int id = 0, minn = 1e9; // b到环的最小距离交汇点
     vector<int> dis(n + 1, -1); // b到其他点的距离
     function<void(int, int, int)> dfs1 = [&](int u, int fa, int tot) {
