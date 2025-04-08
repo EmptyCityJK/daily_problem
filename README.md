@@ -277,6 +277,7 @@ cout << (dp[0] + mod) % mod << endl;
 ### [相差不超过k的最多数](https://www.nowcoder.com/practice/562630ca90ac40ce89443c91060574c6?channelPut=w25springcamp)
 `典 - 二分`
 枚举左端点l，求满足(abs(a[r]-a[l])<=k)的右端点最大值(l=mid)
+> [二分库函数 lower_bound/upper_bound](https://github.com/EmptyCityJK/daily_problem/blob/main/C%2B%2B%E7%AE%97%E7%AB%9E%E5%B8%B8%E7%94%A8%E5%BA%93%E5%87%BD%E6%95%B0.md)
 ```C++
 for(int i=1; i<=n; i++) {
     int l = i, r = n;
