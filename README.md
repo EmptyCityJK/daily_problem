@@ -242,6 +242,7 @@ cout << (dp[0] + mod) % mod << endl;
 ```
 ### [模板-哈夫曼编码](https://www.nowcoder.com/practice/4c0419eb07c840ca8402e4f2a52cfd49?channelPut=w25springcamp)
 > [前缀知识 哈夫曼树和哈夫曼编码](https://zhuanlan.zhihu.com/p/687698948)
+
 `dfs/结论`
 1. 结论
 每个叶子节点的权重（频次）会在哈夫曼树中出现`depth[deaf]`次，故统计字符串在哈夫曼编码后的最短长度：
@@ -276,7 +277,9 @@ cout << (dp[0] + mod) % mod << endl;
 ```
 ### [相差不超过k的最多数](https://www.nowcoder.com/practice/562630ca90ac40ce89443c91060574c6?channelPut=w25springcamp)
 `典 - 二分`
+
 枚举左端点l，求满足(abs(a[r]-a[l])<=k)的右端点最大值(l=mid)
+
 > [二分库函数 lower_bound/upper_bound](https://github.com/EmptyCityJK/daily_problem/blob/main/C%2B%2B%E7%AE%97%E7%AB%9E%E5%B8%B8%E7%94%A8%E5%BA%93%E5%87%BD%E6%95%B0.md)
 ```C++
 for(int i=1; i<=n; i++) {
@@ -302,4 +305,46 @@ for(int i=1; i<=n; i++) {
     int r = prev(upper_bound(a.begin()+1, a.end(), a[i]+k)) - a.begin();
     res = max(res, r - i + 1);
 }
+```
+### [【模板】最近公共祖先] (https://www.luogu.com.cn/problem/P3379)
+`LCA`
+> 1. dfs/bfs求depth和fa
+> 2. lca(int x, int y)：
+> 3. 确保depth[x] > depth[y]
+> 4. 将x跳到与y同一深度
+> 5. 如果x == y，返回x
+> 6. 否则将x和y同时往上跳直到第一次fa[x][k] == fa[y][k]，返回fa[x][0]
+```cpp
+vector<int> depth(n + 1);
+vector<vector<int>> fa(n + 1, vector<int>(31));
+function<void(int, int, int)> dfs = [&](int u, int f, int d) {
+    depth[u] = d;
+    for(int v: g[u]) {
+        if(v == f) continue;
+        fa[v][0] = u;
+        for(int i=1; i<=30; i++) 
+            fa[v][i] = fa[fa[v][i-1]][i-1];
+        dfs(v, u, d+1);
+    }
+};
+vector<int> lg(n + 1);
+for(int i=1; i<=n; i++)
+    lg[i] = lg[i-1] + ((1 << lg[i-1]) == i);
+auto lca = [&](int x, int y) {
+    if(depth[x] < depth[y]) swap(x, y);
+    while(depth[x] > depth[y])
+        x = fa[x][lg[depth[x]-depth[y]] - 1];
+    if(x == y) return x;
+    for(int k=30; k>=0; k--) {
+        if(fa[x][k] != fa[y][k]) {
+            x = fa[x][k];
+            y = fa[y][k];
+        }
+    }
+    return fa[x][0];
+};
+dfs(1, -1, 1);
+// 查询
+int a, b; cin >> a >> b;
+cout << lca(a, b) << endl;
 ```
