@@ -161,6 +161,25 @@ for(int i=1; i<=n; i++) { // 枚举物品
 }
 cout << dp[n][m] << endl;
 ```
+
+### [【模板】01背包](https://www.nowcoder.com/practice/fd55637d3f24484e96dad9e992d3f62e?channelPut=w25springcamp)
+`dp-01背包`
+（1）求这个背包至多能装多大价值的物品？
+（2）若背包**恰好装满**，求至多能装多大价值的物品？
+```cpp
+int n, V; cin >> n >> V;
+vector<int> dp(V + 1); // dp[i]: 背包容量为i时的最大价值
+vector<int> f(V + 1); // f[i]: 恰好装体积i的物品的最大价值
+for(int i=1; i<=n; i++) {
+    int v, w; cin >> v >> w;
+    for(int j=V; j>=v; j--) {
+        dp[j] = max(dp[j], dp[j-v] + w);
+        if(j == v || f[j - v])
+            f[j] = max(f[j], f[j - v] + w);
+    }
+}
+cout << dp[V] << endl << f[V];
+```
 ### [活动安排](https://www.nowcoder.com/practice/16d971e9e42e4f3b9b1e2b8794796a43?channelPut=w25springcamp)
 `贪心 - 典`
 > 按结束时间排序，优先`选择结束时间最早`且`与前一个活动不冲突`的活动
@@ -240,7 +259,7 @@ for(int i=1; i<=n; i++) {
 }
 cout << (dp[0] + mod) % mod << endl;
 ```
-### [模板-哈夫曼编码](https://www.nowcoder.com/practice/4c0419eb07c840ca8402e4f2a52cfd49?channelPut=w25springcamp)
+### [【模板】哈夫曼编码](https://www.nowcoder.com/practice/4c0419eb07c840ca8402e4f2a52cfd49?channelPut=w25springcamp)
 > [前缀知识 哈夫曼树和哈夫曼编码](https://zhuanlan.zhihu.com/p/687698948)
 
 `dfs/结论`
@@ -306,7 +325,7 @@ for(int i=1; i<=n; i++) {
     res = max(res, r - i + 1);
 }
 ```
-### [【模板】最近公共祖先] (https://www.luogu.com.cn/problem/P3379)
+### [【模板】最近公共祖先](https://www.luogu.com.cn/problem/P3379)
 `LCA`
 > 1. dfs/bfs求depth和fa
 > 2. lca(int x, int y)：
