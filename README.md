@@ -180,6 +180,24 @@ for(int i=1; i<=n; i++) {
 }
 cout << dp[V] << endl << f[V];
 ```
+### [【模板】完全背包] (https://www.nowcoder.com/practice/237ae40ea1e84d8980c1d5666d1c53bc?channelPut=w25springcamp)
+`dp-完全背包`
+(1)求这个背包至多能装多大价值的物品？
+(2)若背包**恰好装满**，求至多能装多大价值的物品？
+```cpp
+// dp[j]: 背包容积为j时的最大价值
+vector<int> dp(V + 1);
+// f[j]: 恰好装j容积物品的最大价值
+vector<int> f(V + 1);
+for(int i=1; i<=n; i++) {
+    int v, w; cin >> v >> w;
+    for(int j=v; j<=V; j++) {
+        dp[j] = max(dp[j], dp[j-v] + w);
+        if(j==v || f[j-v])
+            f[j] = max(f[j], f[j-v] + w);
+    }
+}
+```
 ### [活动安排](https://www.nowcoder.com/practice/16d971e9e42e4f3b9b1e2b8794796a43?channelPut=w25springcamp)
 `贪心 - 典`
 > 按结束时间排序，优先`选择结束时间最早`且`与前一个活动不冲突`的活动
