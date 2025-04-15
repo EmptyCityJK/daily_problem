@@ -4,12 +4,13 @@ int main(){
 	//1、字符串输入输出 
     string s;
 	cin >> s; //输入String cin是以空格，回车作为结束输入的标志
-    cout<< s <<endl; //输出为Hello
-    // int n = s.size();
     //2、字符串拼接 
     //支持使用 + 连接字符串
     s = " " + s; // 常用拼接：for i: 1 to n
-    
+    int n = s.size();
+    for(int i=1; i<=n; i++)
+        cout << s[i];
+    cout << endl;
     //3、读取一行字符(cin.getline())并根据空格分割
 	// cin.getline定义在<iostream>下，如：a[n] 则最多读取 n-1个字符 
 	// cin.getline(a,8);
