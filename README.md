@@ -277,6 +277,27 @@ for(int i=1; i<=n; i++) {
 }
 cout << (dp[0] + mod) % mod << endl;
 ```
+### [小红取数](https://www.nowcoder.com/practice/6a7b2b6c9e3a4f56b1db9f8ca08d889b?channelPut=w25springcamp)
+`dp`
+> 二维dp：
+> 前i个数，对k取模为j的最大和
+> vector<vector<ll>> dp(n + 1, vecotr<ll>(k + 1))
+> 一维dp：
+> **对k取模为j**的最大和
+> vector<int> dp(k + 1, -1)
+```cpp
+vector<ll> dp(k+1, -1);
+dp[0] = 0;
+for(int i=1; i<=n; i++) {
+    auto pre = dp; // 模拟滚动数组
+    for(int j=0; j<k; j++) {
+        if(pre[j] != -1) // pre[j] 被更新过
+        dp[(j + a[i]) % k] = max(pre[(j + a[i]) % k], pre[j] + a[i]);
+    }
+}
+if(dp[0] == 0) cout << -1 << endl;
+else cout << dp[0] << endl;
+```
 ### [【模板】哈夫曼编码](https://www.nowcoder.com/practice/4c0419eb07c840ca8402e4f2a52cfd49?channelPut=w25springcamp)
 > [前缀知识 哈夫曼树和哈夫曼编码](https://zhuanlan.zhihu.com/p/687698948)
 
