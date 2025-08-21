@@ -16,9 +16,9 @@ int main() {
         depth[u] = d;
         for(int v: g[u]) {
             if(v == f) continue;
-            fa[u][0] = v;
+            fa[v][0] = u;
             for(int k=1; k<=30; k++)
-                fa[u][k] = fa[fa[u][k-1]][k-1];
+                fa[v][k] = fa[fa[v][k-1]][k-1];
             dfs(v, u, d + 1);
         }
     };
@@ -30,7 +30,7 @@ int main() {
         while(depth[x] > depth[y])
             x = fa[x][lg[depth[x] - depth[y]] - 1];
         if(x == y) return x;
-        for(int k=lg[x]; k>=0; k--) {
+        for(int k=lg[depth[x]]; k>=0; k--) {
             if(fa[x][k] != fa[y][k]) {
                 x = fa[x][k];
                 y = fa[y][k];
@@ -51,16 +51,12 @@ int main() {
     function<void(int, int)> ddfs = [&](int u, int f) {
         for(int v: g[u]) {
             if(f == v) continue;
-            num[u] += num[v];
             ddfs(v, u);
+            num[u] += num[v];
         }
-        cout << ans << " " << num[u] << endl;
         ans = max(ans, num[u]);
     };
     ddfs(1, -1);
-    for(int i=0; i<=n; i++)
-        cout << num[i] << " ";
-    cout << endl;
     cout << ans << endl;
     return 0;
 }

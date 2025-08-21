@@ -180,10 +180,12 @@ for(int i=1; i<=n; i++) {
 }
 cout << dp[V] << endl << f[V];
 ```
-### [【模板】完全背包] (https://www.nowcoder.com/practice/237ae40ea1e84d8980c1d5666d1c53bc?channelPut=w25springcamp)
+###  [【模板】完全背包](https://www.nowcoder.com/practice/237ae40ea1e84d8980c1d5666d1c53bc?channelPut=w25springcamp)
+
 `dp-完全背包`
 (1)求这个背包至多能装多大价值的物品？
 (2)若背包**恰好装满**，求至多能装多大价值的物品？
+
 ```cpp
 // dp[j]: 背包容积为j时的最大价值
 vector<int> dp(V + 1);
@@ -385,3 +387,129 @@ dfs(1, -1, 1);
 int a, b; cin >> a >> b;
 cout << lca(a, b) << endl;
 ```
+### [没有上司的舞会](https://www.luogu.com.cn/problem/P1352)
+
+`树形dp`
+> 题意：每个节点都有一个快乐指数。当父节点被选择时，子节点无法被选择，求最大快乐指数。
+> 
+> Tips. 每个结点都有选或不选两种状态，所以需要开一个二维数组``dp[i][j]``。对于选择当前顶点(`dp[v][1]`)，那么其子节点一定不选(`dp[u][0]`)；对于不选择当前顶点(`dp[v][0]`)，那么其子节点存在两种情况：选其子节点(`dp[u][1]`)或者不选其子节点(`dp[u][0]`)。选其子节点的情况很好理解，不选其子节点的情况存在的原因是：孩子并不是必选的，因为它可能“阻挡”了更深层的更大收益
+例子：假设这里有一个小树
+
+```yaml
+   v
+   |
+   u
+  / \
+ w   x
+```
+
+快乐值：
+
+- `r[v] = 1`
+- `r[u] = 10`
+- `r[w] = 10`
+- `r[x] = 10`
+
+如果 **不选 v**：
+
+- **选 u**：得到 `10 + dp[w][0] + dp[x][0] = 10 + 0 + 0 = 10`
+- **不选 u**：得到 `max(dp[w][0],dp[w][1]) + max(dp[x][0],dp[x][1]) = 10 + 10 = 20`
+
+结果是：虽然 `r[u]` 是正数，但「不选 u」反而能获得更大的总和！
+
+```cpp
+// dp[i][0]: 不选择i号点时，以i为根的子树的最大快乐指数
+// dp[i][1]: 选择i号点时，以i为根的子树的最大快乐指数
+vector<vector<int>> dp(n + 1, vector<int>(2));
+for(int i=1; i<=n; i++)
+    dp[i][1] = r[i];
+function<void(int, int)> dfs = [&](int v, int f) {
+    for(int u : g[v]) {
+        if(u == f) continue;
+        dfs(u, v);
+        dp[v][1] += dp[u][0];
+        dp[v][0] += max(dp[u][0], dp[u][1]);
+    }
+};
+```
+
+### [旅游]([旅游](https://ac.nowcoder.com/acm/problem/15748))
+
+与上一题(没有上司的舞会)基本一致，相当于快乐指数都为1的特殊情况。
+
+### [小美的树上染色]([小美的树上染色](https://ac.nowcoder.com/acm/problem/257808))
+
+`贪心 + 树形dp`
+
+> 题意：一棵树，每个节点有一个权值。初始每个节点都是白色。有若干次操作，每次操作可以选择两个相邻的节点，如果它们都是白色且权值的乘积是完全平方数，可以把这两个节点同时染红。问最多可以染红多少节点？
+>
+> Tips. 贪心思想，局部最优：**从叶子节点往上**，遇到符合要求的就染。判断：该局部最优能达到全局最优。
+
+```cpp
+// 判断一个数是不是完全平方数
+auto check = [&](ll x) {
+    ll sq = sqrt(x);
+    return sq*sq == x;
+};
+int ans = 0;
+vector<bool> st(n + 1);
+// 从叶子结点向上 遇到符合要求的就染
+function<void(int, int)> dfs = [&](int v, int f) {
+    for(int u: g[v]) {
+        if(u == f) continue;
+        dfs(u, v);
+        if(st[u] || st[v]) continue;
+        ll res = w[u] * w[v];
+        if(check(res)) {
+            ans += 2;
+            st[u] = 1, st[v] = 1;
+        }
+    }
+};
+```
+
+### [E-小红的树形 dp_牛客周赛 Round 34](https://ac.nowcoder.com/acm/contest/75766/E)
+
+`树形dp`
+
+> 题意：一棵树，每个节点对应一个由‘?’, ‘d’, ‘p’组成的字符串的相应字符，‘?’可以变成‘d’或‘p’，符合要求的字符串需要满足将所有'?'字符变成'd'或者'p'字符后，任意两个相邻节点的字符不同。不存在该情况输出“-1”，存在则输出符合要求的字符串。
+>
+> 思路：
+> **从上往下**深度遍历，**保证当前节点的父节点已确认字符**，如果其与父节点不符合要求flag修改为false，如果其为‘?’则根据其父节点的字符直接修改。
+> 在进行完上述操作后，遍历当前节点的子节点，如果当前节点及其子节点不符要求则修改flag为false，判断完后进行：`flg &= dfs(u, v)`，保证flg记录的是`以v结点为根的子树是否符合要求`（flg有0则全为0）
+> 另外还需注意：当起点（结点0）为 ‘?’ 时无法根据父节点修改，所以需进行分支判断：先尝试修改为‘d’再尝试修改为‘p’。
+
+```cpp
+// 以v结点为根的子树是否符合要求
+function<bool(int, int)> dfs = [&] (int v, int f) {
+    bool flg = 1;
+    // 不为起点 且 当前顶点与父亲结点字母相同
+    if(v != 0 && s[v] == s[f]) flg = 0;
+    // 不为起点 且 当前顶点为?
+    if(v != 0 && s[v] == '?') {
+        if(s[f] == 'd') s[v] = 'p';
+        else s[v] = 'd';
+    }
+    // 此时，当前顶点v的字母已确定
+    for(int u: g[v]) {
+        if(u == f) continue;
+        if(s[v] == s[u]) flg = 0;
+        flg &= dfs(u, v);
+    }   
+    return flg;
+};
+if(s[0] == '?') {
+    string t = s;
+    s[0] = 'd';
+    if(!dfs(0, -1)) {
+        s = t;
+        s[0] = 'p';
+        if(!dfs(0, -1)) cout << -1 << endl;
+        else cout << s << endl;
+    } else cout << s << endl;
+} else {
+    if(!dfs(0, -1)) cout << -1 << endl;
+    else cout << s << endl;
+}
+```
+
