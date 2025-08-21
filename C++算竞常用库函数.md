@@ -91,3 +91,12 @@ cout << res << endl;
 // 输出 0
 cout << lower_bound(a.begin(), a.end(), 6) - a.end() << endl;
 ```
+
+### ‌__builtin_parity
+判断一个数的**二进制**表示中**1的个数的奇偶性**
+如果1的个数为奇数，则返回1；如果1的个数为偶数，则返回0。
+```cpp
+int result = __builtin_parity(x);
+if(result) puts("奇数个1");
+else puts("偶数个1");
+```
