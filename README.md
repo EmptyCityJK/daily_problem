@@ -536,3 +536,49 @@ if(s[0] == '?') {
 }
 ```
 
+### [白魔法师](https://ac.nowcoder.com/acm/contest/5600/C)
+
+`树上求连通块`
+
+> 题意：一个树，黑白两种颜色，一次操作选择一个黑/白点染成白色。问最大的白色连通块（树的某个连通子图）
+>
+> Tips. 先不考虑染色操作，本题就是找初始树上的最大白色连通块；再考虑染色操作，我们可以发现，能增大初始白色连通块的操作就是染某个黑色点，使其连接起多个白色连通块。
+
+```cpp
+int ans = 0; 
+int id = 1; // 连通块编号
+int num = 0; // 连通块大小
+vector<int> ids(n + 1, 0); // ids[i]: 第i个点的所属连通块
+map<int, int> size; // size[i]: i号连通块大小
+// 遍历所有白色点
+function<void(int, int)> dfs = [&](int v, int f) {
+    ids[v] = id;
+    num ++;
+    for(int u: g[v]) {
+        if(u == f || s[u] == 'B' || ids[u] != 0) continue;
+        dfs(u, v);
+    }
+};
+// 维护最大白色连通块
+for(int i=0; i<n; i++) {
+    num = 0;
+    // 只走没走过的白色
+    if(s[i] == 'W' && ids[i] == 0) {
+        dfs(i, -1);
+        size[id ++] = num;
+        ans = max(ans, num);
+    }
+}
+// 是否存在黑色点能连接多个白色连通块
+for(int i=0; i<n; i++) {
+    if(s[i] == 'B') {
+        int tot = 0;
+        // 遍历黑色点的邻居白色点，累加该邻点所处连通块大小
+        for(int v: g[i])
+            if(ids[v])
+                tot += size[ids[v]];
+        ans = max(ans, tot + 1);
+    }
+}
+```
+
