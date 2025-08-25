@@ -42,10 +42,22 @@ for(int k=0; k<=20; k++) { // 针对二进制每一位的贡献值
 ```
 ### [密码截取](https://www.nowcoder.com/practice/3cd4621963e8454594f00199f4536bb1?channelPut=w25springcamp)
 `求最长回文子串`--枚举回文中心/马拉车
+
 ### [计算字符串的编辑距离](https://www.nowcoder.com/practice/3959837097c7413a961a135d7104c314?channelPut=w25springcamp)
+
 `dp -- 编辑距离问题`
+
+> 编辑距离，指的是两个字符串之间，由一个转变成另一个所需的最少单字符编辑操作次数。被允许的转变包括：
+>
+> - 对于任意一个字符串，在任意位置插入一个字符；
+> - 对于任意一个字符串，删除任意一个字符；
+> - 对于任意一个字符串，替换任意一个字符。
+>
+> 现在，对于给定的字符串 s*s* 和 t*t*，请计算出它们的编辑距离。
+
 我的误区：试图模拟删除/插入操作
 Tips: We can consider **insert** as **delete**.
+
 ```C++
 // dp[i][j]: a[0~i-1] 和 b[0~j-1]之间的编辑距离（最小操作次数：插入 删除 改变）
 // 无操作
@@ -536,6 +548,110 @@ if(s[0] == '?') {
 }
 ```
 
+### [码蹄集OJ-夺取山寨](https://www.matiji.net/exam/brushquestion/50/4693/305EE97B0D5E361DE6A28CD18C929AF0)
+
+`树形dp`
+
+> 题意：n个结点的有根树，根节点为1，每个点可以安排0~n-1种不同权值。`mex(u)`表示以u为根节点的子树中所有节点的权值中，没有出现过的最小自然数。求：$\sum_{u=1}^n mex(u)$最大可能为多少？
+>
+> Tips. 我们先思考，对于叶子结点，它的mex最大肯定是将其赋值为0时，此时mex为1。从下往上，叶子结点的父亲的mex最大是当他取1时，mex为2；不难推断出：**以u为根节点的子树的mex最大可能值是以其子节点为根的最大的子树的大小**。
+> 那么我们定义两个数组:
+>
+> - `dp[i]:` 以 i 为根节点的$\sum_{u=1}^n mex(u)$的最大可能值
+> - `siz[i]:` 以 i 为根节点的子树的大小
+>
+> 状态转移方程为：`dp[u] = max(dp[u], dp[v] + siz[u])`
+>
+> 爆int警告：本题需要注意数据范围，n为1e6的大小，考虑极端情况（一条链），那么从叶子往上，`dp[u] = dp[v] + siz[u]`，而 `siz[u]` 会从 `1,2,3,...,n` 逐级累加。 所以根的 `dp[1] ≈ 1 + 1 + 2 + ... + n = n(n+1)/2`   ->  $O(n^2)$复杂度
+> 当 `n = 10^6` 时：
+>
+> - `n(n+1)/2 ≈ 5×10^11`，远远超出 32 位 `int`（最大约 `2.1×10^9`）。
+
+```cpp
+vector<ll> dp(n + 1, 1); //dp[i]: 以i为根的子树的ans(mex之和的最大可能值)
+vector<ll> siz(n + 1, 1); //siz[i]: 以i为根的子树的大小
+function<void(int, int)> dfs = [&](int u, int fa) {
+    for(int v: g[u]) {
+        if(v == fa) continue;
+        dfs(v, u);
+        siz[u] += siz[v];
+    }
+    for(int v: g[u]) {
+        if(v == fa) continue;
+        dp[u] = max(dp[u], dp[v] + siz[u]);
+    }
+};
+dfs(1, -1);
+cout << dp[1];
+```
+
+### [码蹄集OJ-树上加和](https://www.matiji.net/exam/brushquestion/30/4693/305EE97B0D5E361DE6A28CD18C929AF0?from=1)
+
+`树形dp`
+
+> 题意：一棵有点权的树，求所有连通块的点权总和。
+>
+> 定义两个数组：
+>
+> - `dp[i]: ` 包含点 i 的所有连通块的点权总和
+> - `f[i]: `包含点 i 的连通块个数
+>
+> **如何求其状态转移方程？**
+>
+> 假定有两个点u, v，那么 dp[u] 代表包含点u的所有连通块的点权总和，f[u] 代表包含点u的连通块个数，dp[v] 和 f[v] 同理。现在我们需要将点u和点v连线（假定点u是点v的父亲）那么 dp[u] 需要在本身的基础上加上包含点v的连通块引入的新连通块。对点u的点权和而言，相当于从原先`dp[u]`增加到`dp[u] + dp[u]*f[v] + dp[v]*f[u]`；对于点 u 的连通块数量而言，相当于从原先`f[u]`个连通块增加到`f[u] + f[u] * f[v]` 个。
+>
+> **例子：**
+> dp[u] = a + b + c    dp[v] = u + v + x + y
+> f[u] = 3    f[v] = 4
+> 两两连通块组合起来的增加的点权：
+> (a + u) + (a + v) + (a + x) + (a + y) = 4 * a + (u + v + x + y)
+> -> 4 * b + (u + v + x + y), 4 * c + (u + v + x + y)
+> -> 4 * (a + b + c) + 3 * (u + v + x + y) -> `f[v] * dp[u] + f[u] * dp[v]`
+
+```cpp
+vector<ll> dp(n + 1); // dp[i]: 包含点i的所有连通块的点权总和
+vector<ll> f(n + 1, 1); // f[i]: 包含点i的连通块数量
+function<void(int, int)> dfs = [&](int u, int fa) {
+    dp[u] = a[u];
+    for(int v: g[u]) {
+        if(v == fa) continue;
+        dfs(v, u);
+        dp[u] = (dp[u] + (dp[u] * f[v] % mod + dp[v] * f[u] % mod) % mod) % mod;
+        f[u] = (f[u] + f[u] * f[v] % mod) % mod;
+    }
+};
+dfs(1, -1);
+ll ans = 0;
+for(int i=1; i<=n; i++) {
+    ans = (ans + dp[i]) % mod;
+}
+```
+
+### [Problem - 5647 求树上所有连通块的大小之和](https://acm.hdu.edu.cn/showproblem.php?pid=5647)
+
+`树形dp`
+
+> 题意：给你一颗树，求这棵树的所有连通块大小的和是多少。
+>
+> 与上一题树上加和基本一致，可以看作点权值为1的情况。
+
+```cpp
+vector<ll> dp(n + 1, 1); // dp[i]: 包含i在内的所有连通块的大小之和
+vector<ll> f(n + 1, 1); // f[i]: 包含i在内的连通块数量
+function<void(int, int)> dfs = [&](int u, int fa) {
+    for(int v: g[u]) {
+        if(v == fa) continue;
+        dfs(v, u);
+        dp[u] = (dp[u] + (dp[u] * f[v] % mod + dp[v] * f[u] % mod) % mod) % mod;
+        f[u] = (f[u] + f[u] * f[v] % mod) % mod;
+    }
+};
+dfs(1, -1);
+ll ans = 0;
+for(int i=1; i<=n; i++)
+    ans = (ans + dp[i]) % mod;
+```
+
 ### [白魔法师](https://ac.nowcoder.com/acm/contest/5600/C)
 
 `树上求连通块`
@@ -579,6 +695,56 @@ for(int i=0; i<n; i++) {
                 tot += size[ids[v]];
         ans = max(ans, tot + 1);
     }
+}
+```
+
+### [码蹄集OJ-括号序列](https://www.matiji.net/exam/brushquestion/2/4693/305EE97B0D5E361DE6A28CD18C929AF0?from=1)
+
+`模拟-找规律`
+
+> 题意：最少交换相邻符号多少次可以形成**匹配**的字符串，保证最后一定可以匹配。匹配的字符串：`()()`或是`(())`
+>
+> Tips. 不匹配的字符串形如`)()())((`，第一眼可能会按照这个方式匹配为：`) () () ) ( (`但这样会需要交换7次，但其实应该看作：`)( )( ))((`，这样只需交换5次。
+>
+> 更通用的，定义变量`ans`, `l`,` r`,从左到右：
+>
+> 1. 遇到` ‘)’ `，如果前面有未匹配的`‘(’`（`l>0`），`l --`
+> 2. 遇到`‘)’`，如果前面没有匹配的`‘(’`（`l=0`），`r ++`
+> 3. 遇到`‘(’`，如果前面有未匹配的`‘)’`（`r>0`），`ans += r; r --`
+> 4. 遇到`‘(’`，如果前面没有匹配的`‘)’`（`r=0`），`l ++`
+>
+> 需要注意的是，括号匹配问题可能会让人联想到栈，但此题需要考虑位置，用栈剔除看似匹配的括号会影响答案的计算（例子见Tips）。
+
+```cpp
+#include <bits/stdc++.h>
+using namespace std;
+#define debug(x) cerr << #x << ": " << x << '\n';
+#define endl '\n'
+typedef long long ll;
+typedef pair<int, int> pii;
+inline void solve() {
+    string s; cin >> s;
+    int n = s.size();
+    ll ans = 0, l = 0, r = 0;
+    for(int i=0; i<n; i++) {
+        if(s[i] == '(') {
+            if(r) {
+                ans += r;
+                r --;
+            } else l ++;
+        } else {
+            if(l) l --;
+            else r ++;
+        }
+    }
+    cout << ans << endl;
+}
+int main()
+{
+    int t; cin >> t;
+    while(t --)
+        solve();
+    return 0;
 }
 ```
 
